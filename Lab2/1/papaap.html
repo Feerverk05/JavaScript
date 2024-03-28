@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Опитування про онлайн-курси</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: #f4f4f4;
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    form {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    label {
+        font-weight: bold;
+    }
+    select, input[type="text"], input[type="email"], button {
+        width: 100%;
+        padding: 8px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 16px;
+    }
+    button {
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #0056b3;
+    }
+    ul {
+        margin-top: 20px;
+        padding: 0;
+        list-style-type: none;
+    }
+    li {
+        margin-bottom: 5px;
+    }
+</style>
+</head>
+<body>
+    <h1>Опитування про онлайн-курси</h1>
+    <form id="surveyForm">
+        <label for="name">Ім'я:</label>
+        <input type="text" id="name" name="name" required>
+
+        <label for="email">Електронна пошта:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="question1">Як ви оцінюєте користь від онлайн-курсів?</label>
+        <select id="question1" name="question1" required>
+            <option value="">Оберіть відповідь</option>
+            <option value="5">Дуже корисно</option>
+            <option value="4">Корисно</option>
+            <option value="3">Середньо</option>
+            <option value="2">Мало корисно</option>
+            <option value="1">Не корисно взагалі</option>
+        </select>
+
+        <label for="question2">Яку тему ви б хотіли вивчати на наступному курсі?</label>
+        <input type="text" id="question2" name="question2" required>
+
+        <label for="question3">Чи задоволені ви організацією та структурою курсу?</label><br>
+        <input type="radio" id="question3-yes" name="question3" value="yes" required>Так
+        <input type="radio" id="question3-no" name="question3" value="no">Ні <br><br>
+
+        <label for="question4">Як часто ви використовуєте отримані знання з курсу у практичній діяльності?</label>
+        <select id="question4" name="question4" required>
+            <option value="">Оберіть відповідь</option>
+            <option value="always">Завжди</option>
+            <option value="often">Часто</option>
+            <option value="sometimes">Іноді</option>
+            <option value="rarely">Рідко</option>
+            <option value="never">Ніколи</option>
+        </select>
+
+        <label for="question5">Чи радите ви друзям і колегам брати участь у цьому курсі?</label><br>
+        <input type="radio" id="question5-yes" name="question5" value="yes" required>Так
+        <input type="radio" id="question5-no" name="question5" value="no">Ні <br><br>
+
+        <label for="question6">Чи відповідає курс вашим очікуванням?</label>
+        <select id="question6" name="question6" required>
+            <option value="">Оберіть відповідь</option>
+            <option value="exceeded">Перевищив очікування</option>
+            <option value="met">Відповів очікуванням</option>
+            <option value="below">Нижче очікувань</option>
+        </select>
+
+        <label for="question7">Чи вважаєте ви, що курс допоміг вам у підвищенні професійних навичок?</label>
+        <input type="radio" id="question7-yes" name="question7" value="yes" required>Так
+        <input type="radio" id="question7-no" name="question7" value="no">Ні <br><br>
+
+        <label for="question8">Яка форма навчання вам більше подобається?</label>
+        <select id="question8" name="question8" required>
+            <option value="">Оберіть відповідь</option>
+            <option value="online">Онлайн</option>
+            <option value="offline">Офлайн</option>
+            <option value="mixed">Змішана (онлайн та офлайн)</option>
+        </select>
+
+        <label for="question9">Яка вам більше подобається тривалість курсу?</label>
+        <select id="question9" name="question9" required>
+            <option value="">Оберіть відповідь</option>
+            <option value="short">Короткий (до 1 місяця)</option>
+            <option value="medium">Середній (1-3 місяці)</option>
+            <option value="long">Довгий (більше 3 місяців)</option>
+        </select>
+
+        <label for="question10">Як ви оцінюєте якість викладання матеріалу курсу?</label>
+        <input type="number" id="question10" name="question10" min="1" max="5" required>
+
+        <button type="submit">Відправити</button>
+    </form>
+
+    <button id="showResults">Показати результати</button>
+    <ul id="surveyResults"></ul>
+
+    <script>
+        const surveys = JSON.parse(localStorage.getItem('surveys')) || [];
+    
+        const showResultsButton = document.getElementById('showResults');
+        const surveyResults = document.getElementById('surveyResults');
+    
+        showResultsButton.addEventListener('click', () => {
+            displayResults();
+        });
+    
+        function displayResults() {
+            surveyResults.innerHTML = '';
+            
+            const criteria = {
+                onlineLearning: 0,
+                usefulCourse: 0,
+                mediumBenefit: 0,
+                helpedSkills: 0,
+                notSatisfied: 0,
+                recommendCourse: 0
+            };
+        
+            surveys.forEach(survey => {
+                const { question8, question1, question3, question5, question7 } = survey;
+                if (question8 === 'online') {
+                    criteria.onlineLearning++;
+                }
+                if (question1 === '4' || question1 === '5') {
+                    criteria.usefulCourse++;
+                }
+                if (question7 === 'yes') {
+                    criteria.helpedSkills++;
+                }
+                if (question3 === 'no') {
+                    criteria.notSatisfied++;
+                }
+                if (question5 === 'yes') {
+                    criteria.recommendCourse++;
+                }
+            });
+        
+            for (const criterion in criteria) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${criterion}: ${criteria[criterion]}`;
+                surveyResults.appendChild(listItem);
+            }
+        
+            const satisfiedCount = surveys.filter(survey => survey.question3 === 'yes').length;
+            const notSatisfiedCount = surveys.filter(survey => survey.question3 === 'no').length;
+        
+            const satisfiedListItem = document.createElement('li');
+            satisfiedListItem.textContent = `Задоволені організацією та структурою курсу: ${satisfiedCount} людей`;
+            surveyResults.appendChild(satisfiedListItem);
+        
+            const notSatisfiedListItem = document.createElement('li');
+            notSatisfiedListItem.textContent = `Не задоволені організацією та структурою курсу: ${notSatisfiedCount} людей`;
+            surveyResults.appendChild(notSatisfiedListItem);
+        }
+        
+    
+        // Функція для відправки опитування
+        const form = document.getElementById('surveyForm');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(form);
+            const survey = {};
+            for (let [key, value] of formData.entries()) {
+                survey[key] = value;
+            }
+            surveys.push(survey);
+            localStorage.setItem('surveys', JSON.stringify(surveys));
+            form.reset();
+        });
+    </script>    
+</body>
+</html>
